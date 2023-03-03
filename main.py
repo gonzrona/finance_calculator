@@ -1,37 +1,5 @@
-from date_classes import current_year, next_month, Year
+from interest_functions import apr_daily_compound
 
-def apr_daily_compound(principal:float, payment:float, apr:float) -> int:
-    run = True
-    year_count = 0
-    payment_count = 0
-    if payment < 31*principal*apr/365:
-        print("Payment too small to pay off loan")
-        return 0
-    while run:
-        year = Year(current_year(), next_month()) if year_count==0 else Year(current_year() + year_count)
-        daily_apr = apr/365 if not year.leap else apr/366
-        for month in year:
-            for _ in range(month.days):
-                principal += principal*daily_apr
-            principal -= payment
-            payment_count += 1
-            if principal <= 0:
-                run = False
-                break
-        year_count += 1
-    return payment_count
     
-    
-
-
-#Years = [Year(year) for year in range(2023,2025)]
-#Years = [Year(2023,"March"), Year(2024)]
-#
-#for year in Years:
-#    for month in year:
-#        print(month)
-#    print(" ")
-        
-
 print(apr_daily_compound(10000.0, 200.0, .0423))
 print(apr_daily_compound(10000.0, 200.0, .2049))

@@ -40,3 +40,13 @@ def next_month() -> str:
     return month_list[date.today().month%12]
 def current_year() -> int:
     return date.today().year
+
+
+
+#Years = [Year(year) for year in range(2023,2025)]
+#Years = [Year(2023,"March"), Year(2024)]
+#
+#for year in Years:
+#    for month in year:
+#        print(month)
+#    print(" ")
