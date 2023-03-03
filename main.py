@@ -1,3 +1,6 @@
+from datetime import date
+
+
 month_list = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 class Month:
@@ -34,26 +37,44 @@ class Year:
     def __str__(self):
         return "{} Leap Year".format(self.value) if self.leap else "{}".format(self.value)
 
-#Years = [Year(year) for year in range(2023,2025)]
-Years = [Year(2023,"March"), Year(2024)]
 
-for year in Years:
-    for month in year:
-        print(month)
-    print(" ")
+        
+def next_month() -> str:
+    return month_list[date.today().month%12]
+
+
+def apr_daily_compound(principal:float, payment:float, apr:float) -> int:
+    run = True
+    year_count = 0
+    payment_count = 0
+    if payment < 31*principal*apr/365:
+        print("Payment too small to pay off loan")
+        return 0
+    while run:
+        year = Year(date.today().year,next_month()) if year_count==0 else Year(date.today().year + year_count)
+        daily_apr = apr/365 if not year.leap else apr/366
+        for month in year:
+            for _ in range(month.days):
+                principal += principal*daily_apr
+            principal -= payment
+            payment_count += 1
+            if principal <= 0:
+                run = False
+                break
+        year_count += 1
+    return payment_count
+    
+    
+
+
+#Years = [Year(year) for year in range(2023,2025)]
+#Years = [Year(2023,"March"), Year(2024)]
+#
+#for year in Years:
+#    for month in year:
+#        print(month)
+#    print(" ")
         
 
-
-#for month in Year():
-#    print(month)
-#
-#print(Year(2023,"March").start)
-#print(Year(2024))
-#print(Year(2025))
-#print(Year(2026))
-#print(Year(2027))
-#print(Year(2028))
-
-
-#myString: str = "monkey"
-#print(myString)
+print(apr_daily_compound(10000.0, 200.0, .0423))
+print(apr_daily_compound(10000.0, 200.0, .2049))
