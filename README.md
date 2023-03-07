@@ -32,7 +32,7 @@ Budget Tool
     - Time to Goals
   - Goals
     - How long until I retire
-    - Saving to down paymen/ large purchase
+    - Saving to down payment/ large purchase
     - Paying off debt
     - Simple budget
     - Retirement
