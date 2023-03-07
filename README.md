@@ -22,6 +22,7 @@ Budget Tool
     - Loans (compound, APR, type)
     - Format as XML or json for organization
     - Expected annual raise
+    - Single / Married
   - Output
     - Weekly/Monthly/Yearly balances
     - Suggestions on different goals
