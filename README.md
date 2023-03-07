@@ -6,6 +6,8 @@
 - UI (add/remove) new accounts
 - Work out escrow accounts
 - Test on my loans/accounts
+- Do all finance measures book
+- How to properly allocate investments
 - Have Jon check
   - Accuracy
   - Include enough
@@ -29,7 +31,7 @@ Budget Tool
     - Balances
     - Time to Goals
   - Goals
-    - How long wuntil I retire
+    - How long until I retire
     - Saving to down paymen/ large purchase
     - Paying off debt
     - Simple budget
