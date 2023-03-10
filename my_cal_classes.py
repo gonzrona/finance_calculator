@@ -5,62 +5,23 @@ from enum import Enum
 import abc
 
 
-class RCat(Enum):
-    expense = 0
-    income = 1
-
-
-
-
-
-
-# class Frequency():
-#     # Options
-#     #   daily 
-#     #   weekly
-#     #   monthly
-#     #   yearly
-#     #   specific day of the month
-#     def __init__(self, category: FCat, origin: dt) -> None:
-#         self.category = category
-#         self.origin = origin
-#         self.days
-
-#     def check(self, date: dt) -> bool:
-#         return False
-        # return True # if (date - self.origin).days%income.frequency == 0 else True
-
-
-# class Frequency():
-#     # def __init__(self, name: str) -> None:
-#     #     self.name = name
-#     @abc.abstractmethod
-#     def check(self):
-#         pass
-
-# class onFrequency(Frequency):
-#     def check(self) -> None:
-#         pass
-
-
-
-# class FCat(Enum):
-#     weekly = 0
-#     biweekly = 1
-#     monthly = 2
-#     yearly = 3
-#     xdays = 4
-
 class Frequency():
     @abc.abstractmethod
     def check(self, date: dt):
         pass
+
+class Once(Frequency):
+    def __init__(self, date: dt) -> None:
+        self.date = date
+    def check(self, date: dt) -> bool:
+        return True if self.date == date else False
 
 class Weekly(Frequency):
     def __init__(self, day: str) -> None:
         self.day = day
     def check(self, date: dt) -> bool:
         return True if self.day == f'{date:%A}' else False
+
         
 # class BiWeekly(Frequency):
 #     def __init__(self):
@@ -95,8 +56,9 @@ class Recurring():
     def __str__(self) -> str:
         return self.to_dictionary().__str__()
 
-class OneTime():
-    pass
+class OneTime(Recurring):
+    def __init__(self, name: str, amount: float, frequency: Frequency) -> None:
+        super().__init__(name=name, amount=amount, frequency=frequency)
 
 
 class Account:
@@ -127,6 +89,8 @@ checking.add_expence(Recurring(name="Private Loans", amount=600, frequency=Month
 checking.add_expence(Recurring(name="Gas", amount=80, frequency=Monthly(day=22)))
 checking.add_expence(Recurring(name="City", amount=130, frequency=Monthly(day=22)))
 checking.add_expence(Recurring(name="Internet", amount=20, frequency=Monthly(day=7)))
+
+checking.add_expence(OneTime(name="St Patricks", amount=400, frequency=Once(dt(2023,3,17))))
 
 savings = Account(name="Savings", balance=10113.62)
 savings.add_income(Recurring(name="INL", amount=300, frequency=Weekly(day="Wednesday")))
