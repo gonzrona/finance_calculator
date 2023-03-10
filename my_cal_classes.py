@@ -2,82 +2,138 @@
 from datetime import date as dt
 from datetime import timedelta
 from enum import Enum
+import abc
+
 
 class RCat(Enum):
     expense = 0
     income = 1
 
-class FCat(Enum):
-    xdays = 0
-    onday = 1
 
+
+
+
+
+# class Frequency():
+#     # Options
+#     #   daily 
+#     #   weekly
+#     #   monthly
+#     #   yearly
+#     #   specific day of the month
+#     def __init__(self, category: FCat, origin: dt) -> None:
+#         self.category = category
+#         self.origin = origin
+#         self.days
+
+#     def check(self, date: dt) -> bool:
+#         return False
+        # return True # if (date - self.origin).days%income.frequency == 0 else True
+
+
+# class Frequency():
+#     # def __init__(self, name: str) -> None:
+#     #     self.name = name
+#     @abc.abstractmethod
+#     def check(self):
+#         pass
+
+# class onFrequency(Frequency):
+#     def check(self) -> None:
+#         pass
+
+
+
+# class FCat(Enum):
+#     weekly = 0
+#     biweekly = 1
+#     monthly = 2
+#     yearly = 3
+#     xdays = 4
 
 class Frequency():
-    # Options
-    #   daily 
-    #   weekly
-    #   monthly
-    #   yearly
-    #   specific day of the month
-    def __init__(self, origin: dt, ) -> None:
-        self.origin = origin
+    @abc.abstractmethod
+    def check(self, date: dt):
+        pass
 
-    def check_date(self, date: dt) -> bool:
-        return True if (date - self.origin).days%income.frequency == 0 else True
+class Weekly(Frequency):
+    def __init__(self, day: str) -> None:
+        self.day = day
+    def check(self, date: dt) -> bool:
+        return True if self.day == f'{date:%A}' else False
+        
+# class BiWeekly(Frequency):
+#     def __init__(self):
+#         pass
+
+class Monthly(Frequency):
+    def __init__(self, day: int) -> None:
+        self.day = day
+    def check(self, date: dt) -> bool:
+        return True if self.day == date.day else False
+
+# class Yearly(Frequency):
+#     def __init__(self):
+#         pass
+
+# class Days(Frequency):
+#     def __init__(self):
+#         pass
+
+
 
 class Recurring():
-    # def __init__(self, category: RCat, name: str, origin: dt, amount: float, frequency_category: FCat) -> None:
-    def __init__(self, category: RCat, name: str, origin: dt, amount: float) -> None:
-        self.category = category
+    def __init__(self, name: str, amount: float, frequency: Frequency) -> None:
+        # self.category = category
         self.name = "name"
-        self.origin = origin
-        self.frequency = 7
+        self.frequency = frequency
         self.amount = amount
     
     def to_dictionary(self) -> dict:
-        return {"category":self.category.name, "name":self.name, "start date": self.origin.__str__(), "frequency": self.frequency, "amount": self.amount}
+        return {"category":self.category.name, "name":self.name, "amount": self.amount}
 
     def __str__(self) -> str:
         return self.to_dictionary().__str__()
 
-
-class Income(Recurring):
-    def __init__(self, name: str, origin: dt, amount: float) -> None:
-        super().__init__(category = RCat.income, name = name, origin = origin, amount = amount)
-
-class Expense(Recurring):
-    def __init__(self, name: str, origin: dt, amount: float) -> None:
-        super().__init__(category = RCat.expense, name = name, origin = origin, amount = amount)
+class OneTime():
+    pass
 
 
 class Account:
-    def __init__(self, balance: float = 0.0) -> None:
+    def __init__(self, name:str, balance: float = 0.0) -> None:
+        self.name = name
         self.balance = balance
-        self.incomes: [Income] = []
-        self.recurring_expences: [Expense] = []
+        self.incomes: [Recurring] = []
+        self.expences: [Recurring] = []
 
-    def add_income(self, income:Income) -> None:
+    def add_income(self, income:Recurring) -> None:
         self.incomes.append(income)
     
-    def add_recurring_expence(self, expence: Expense) -> None:
-        self.recurring_expences.append(expence)
+    def add_expence(self, expence:Recurring) -> None:
+        self.expences.append(expence)
 
     def update(self, date: dt) -> None:
         for income in self.incomes:
-            diff = date - income.origin
-            if diff.days%income.frequency == 0:
-                self.balance += income.amount
-            # print(diff.days)
-        for expense in self.recurring_expences:
-            diff = date - expense.origin
-            if diff.days%expense.frequency == 0:
-                self.balance -= expense.amount
+            if income.frequency.check(date=date): self.balance += income.amount
+        for expense in self.expences:
+            if expense.frequency.check(date=date): self.balance -= expense.amount
 
 
-account = Account(balance=617.73)
-account.add_income(Income(name="SoFi", origin=dt(2023,3,8), amount=1220))
+checking = Account(name="Checking", balance=617.73)
+checking.add_income(Recurring(name="INL", amount=920, frequency=Weekly(day="Wednesday")))
+checking.add_expence(Recurring(name="Grocery", amount=100, frequency=Weekly(day="Sunday")))
+checking.add_expence(Recurring(name="Mortgage", amount=1000, frequency=Monthly(day=1)))
+checking.add_expence(Recurring(name="Private Loans", amount=600, frequency=Monthly(day=7)))
+checking.add_expence(Recurring(name="Gas", amount=80, frequency=Monthly(day=22)))
+checking.add_expence(Recurring(name="City", amount=130, frequency=Monthly(day=22)))
+checking.add_expence(Recurring(name="Internet", amount=20, frequency=Monthly(day=7)))
 
-for i in range(20):
+savings = Account(name="Savings", balance=10113.62)
+savings.add_income(Recurring(name="INL", amount=300, frequency=Weekly(day="Wednesday")))
+
+
+for i in range(60):
     date = dt.today() + timedelta(days=i)
-    account.update(date)
-    print(date, account.balance)
+    checking.update(date)
+    savings.update(date)
+    print(date, "{:.2f}".format(checking.balance), "{:.2f}".format(savings.balance))
