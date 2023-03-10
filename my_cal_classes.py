@@ -8,20 +8,66 @@ class ATYP(Enum):
     checking = 2
     other = 3
 
+class RCat(Enum):
+    expense = 0
+    income = 1
 
-# class Frequency():
-#     # there should be 
-#     def __init__():
-#         pass
+
+class Frequency():
+    # Options
+    #   daily 
+    #   weekly
+    #   monthly
+    #   yearly
+    #   specific day of the month
+    def __init__(self) -> None:
+        pass
+
+# class Type(Enum):
+#     expense = 1
+#     checking = 2
+#     other = 3
+
+class Recurring():
+    def __init__(self, category: RCat, name: str, start_date: dt, amount: float) -> None:
+        self.category = category
+        self.name = "name"
+        self.start_date = start_date
+        self.frequency = 7
+        self.amount = amount
+    
+    def to_dictionary(self) -> dict:
+        return {"category":self.category.name, "name":self.name, "start date": self.start_date.__str__(), "frequency": self.frequency, "amount": self.amount}
+
+    def __str__(self) -> str:
+        return self.to_dictionary().__str__()
+
+
+class IncomeTest(Recurring):
+    def __init__(self, name: str, start_date: dt, amount: float) -> None:
+        super().__init__(category = RCat.income, name = name, start_date = start_date, amount = amount)
+
+
+
+
+
+# class Expence(Recurring):
+#     def __init__(self, start_date: dt, value: float, ) -> None:
+#         self.type = "Expense"
+
+# class Income(Recurring):
+#     self.type = "Income"
 
 class Recurring_Expence():
     def __init__(self, start_date: dt, value: float) -> None:
+        self.name = "RE"
         self.start_date = start_date
         self.frequency = 7
         self.value = value
 
-class Income:
+class Income():
     def __init__(self, start_date: dt, value: float) -> None:
+        self.name = "I"
         self.start_date = start_date
         self.frequency = 7
         self.value = value

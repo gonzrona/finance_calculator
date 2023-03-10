@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from my_cal_classes import Account, Income, Recurring_Expence
+from my_cal_classes import Account, Income, Recurring_Expence, Recurring, RCat, IncomeTest
 
 
 
@@ -36,8 +36,15 @@ account.add_recurring_expence(Recurring_Expence(start_date=date(2023,3,12), valu
 for i in range(30):
     dt = date.today() + timedelta(days=i)
     account.update(dt)
-    print(dt, account.balance)
+    # print(dt, account.balance)
 
+
+# Recurring(RCat.expense, "paycheck", date.today(), 1220.00)
+
+
+print(Recurring(RCat.income, "paycheck", date.today(), 1220.00))
+
+print(IncomeTest("paycheck", date.today(), 1220.00))
 
 # dt = date.today() + 
 
