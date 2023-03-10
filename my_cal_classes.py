@@ -45,16 +45,12 @@ class Monthly(Frequency):
 
 class Recurring():
     def __init__(self, name: str, amount: float, frequency: Frequency) -> None:
-        # self.category = category
         self.name = "name"
         self.frequency = frequency
         self.amount = amount
-    
-    def to_dictionary(self) -> dict:
-        return {"category":self.category.name, "name":self.name, "amount": self.amount}
 
     def __str__(self) -> str:
-        return self.to_dictionary().__str__()
+        return {"category":self.category.name, "name":self.name, "amount": self.amount}.__str__()
 
 class OneTime(Recurring):
     def __init__(self, name: str, amount: float, frequency: Frequency) -> None:
