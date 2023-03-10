@@ -3,14 +3,13 @@ from datetime import date as dt
 from datetime import timedelta
 from enum import Enum
 
-class ATYP(Enum):
-    savings = 1
-    checking = 2
-    other = 3
-
 class RCat(Enum):
     expense = 0
     income = 1
+
+class FCat(Enum):
+    xdays = 0
+    onday = 1
 
 
 class Frequency():
@@ -20,85 +19,65 @@ class Frequency():
     #   monthly
     #   yearly
     #   specific day of the month
-    def __init__(self) -> None:
-        pass
+    def __init__(self, origin: dt, ) -> None:
+        self.origin = origin
 
-# class Type(Enum):
-#     expense = 1
-#     checking = 2
-#     other = 3
+    def check_date(self, date: dt) -> bool:
+        return True if (date - self.origin).days%income.frequency == 0 else True
 
 class Recurring():
-    def __init__(self, category: RCat, name: str, start_date: dt, amount: float) -> None:
+    # def __init__(self, category: RCat, name: str, origin: dt, amount: float, frequency_category: FCat) -> None:
+    def __init__(self, category: RCat, name: str, origin: dt, amount: float) -> None:
         self.category = category
         self.name = "name"
-        self.start_date = start_date
+        self.origin = origin
         self.frequency = 7
         self.amount = amount
     
     def to_dictionary(self) -> dict:
-        return {"category":self.category.name, "name":self.name, "start date": self.start_date.__str__(), "frequency": self.frequency, "amount": self.amount}
+        return {"category":self.category.name, "name":self.name, "start date": self.origin.__str__(), "frequency": self.frequency, "amount": self.amount}
 
     def __str__(self) -> str:
         return self.to_dictionary().__str__()
 
 
-class IncomeTest(Recurring):
-    def __init__(self, name: str, start_date: dt, amount: float) -> None:
-        super().__init__(category = RCat.income, name = name, start_date = start_date, amount = amount)
+class Income(Recurring):
+    def __init__(self, name: str, origin: dt, amount: float) -> None:
+        super().__init__(category = RCat.income, name = name, origin = origin, amount = amount)
 
+class Expense(Recurring):
+    def __init__(self, name: str, origin: dt, amount: float) -> None:
+        super().__init__(category = RCat.expense, name = name, origin = origin, amount = amount)
 
-
-
-
-# class Expence(Recurring):
-#     def __init__(self, start_date: dt, value: float, ) -> None:
-#         self.type = "Expense"
-
-# class Income(Recurring):
-#     self.type = "Income"
-
-class Recurring_Expence():
-    def __init__(self, start_date: dt, value: float) -> None:
-        self.name = "RE"
-        self.start_date = start_date
-        self.frequency = 7
-        self.value = value
-
-class Income():
-    def __init__(self, start_date: dt, value: float) -> None:
-        self.name = "I"
-        self.start_date = start_date
-        self.frequency = 7
-        self.value = value
-    
-    def __str__(self) -> str:
-        return f"Start date: {self.start_date}"
 
 class Account:
-    def __init__(self, balance: float = 0.0) -> None: #, actType = ATYP.savings):
+    def __init__(self, balance: float = 0.0) -> None:
         self.balance = balance
         self.incomes: [Income] = []
-        self.recurring_expences: [Recurring_Expence] = []
+        self.recurring_expences: [Expense] = []
 
     def add_income(self, income:Income) -> None:
         self.incomes.append(income)
     
-    def add_recurring_expence(self, expence: Recurring_Expence) -> None:
+    def add_recurring_expence(self, expence: Expense) -> None:
         self.recurring_expences.append(expence)
-
-    # def modify(self) -> None:
-    #     pass
 
     def update(self, date: dt) -> None:
         for income in self.incomes:
-            diff = date - income.start_date
+            diff = date - income.origin
             if diff.days%income.frequency == 0:
-                self.balance += income.value
+                self.balance += income.amount
             # print(diff.days)
         for expense in self.recurring_expences:
-            diff = date - expense.start_date
+            diff = date - expense.origin
             if diff.days%expense.frequency == 0:
-                self.balance -= expense.value
+                self.balance -= expense.amount
 
 
+account = Account(balance=617.73)
+account.add_income(Income(name="SoFi", origin=dt(2023,3,8), amount=1220))
+
+for i in range(20):
+    date = dt.today() + timedelta(days=i)
+    account.update(date)
+    print(date, account.balance)
