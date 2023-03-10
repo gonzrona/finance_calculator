@@ -42,9 +42,26 @@ class Monthly(Frequency):
 #         pass
 
 
+class APY():
+    def __init__(self, rate:float, frequency:Frequency) -> None:
+        self.rate = rate
+        self.frequency = frequency
+        self.accrued = 0.0
+
+    def update(self, date:dt, principal:float) -> float:
+        if self.frequency.check(date=date):
+            total = self.accrued
+            self.accrued = 0.0
+            return total
+        else:
+            days = 366 if date.year%4==0 else 365
+            self.accrued += principal*self.rate/days
+            return 0.0
+        
+
 
 class Recurring():
-    def __init__(self, name: str, amount: float, frequency: Frequency) -> None:
+    def __init__(self, name:str, amount:float, frequency:Frequency) -> None:
         self.name = "name"
         self.frequency = frequency
         self.amount = amount
@@ -53,12 +70,13 @@ class Recurring():
         return {"category":self.category.name, "name":self.name, "amount": self.amount}.__str__()
 
 class OneTime(Recurring):
-    def __init__(self, name: str, amount: float, frequency: Frequency) -> None:
+    def __init__(self, name:str, amount:float, frequency:Frequency) -> None:
         super().__init__(name=name, amount=amount, frequency=frequency)
 
 
 class Account:
-    def __init__(self, name:str, balance: float = 0.0) -> None:
+    def __init__(self, name:str, balance:float, apy:APY) -> None:
+        self.apy = apy
         self.name = name
         self.balance = balance
         self.incomes: [Recurring] = []
@@ -71,13 +89,14 @@ class Account:
         self.expences.append(expence)
 
     def update(self, date: dt) -> None:
+        self.balance += self.apy.update(date=date, principal=self.balance)
         for income in self.incomes:
             if income.frequency.check(date=date): self.balance += income.amount
         for expense in self.expences:
             if expense.frequency.check(date=date): self.balance -= expense.amount
 
 
-checking = Account(name="Checking", balance=617.73)
+checking = Account(name="Checking", balance=617.73, apy=APY(rate=.025, frequency=Monthly(day=1)))
 checking.add_income(Recurring(name="INL", amount=920, frequency=Weekly(day="Wednesday")))
 checking.add_expence(Recurring(name="Grocery", amount=100, frequency=Weekly(day="Sunday")))
 checking.add_expence(Recurring(name="Mortgage", amount=1000, frequency=Monthly(day=1)))
@@ -88,7 +107,9 @@ checking.add_expence(Recurring(name="Internet", amount=20, frequency=Monthly(day
 
 checking.add_expence(OneTime(name="St Patricks", amount=400, frequency=Once(dt(2023,3,17))))
 
-savings = Account(name="Savings", balance=10113.62)
+# principal=9487.44
+
+savings = Account(name="Savings", balance=10113.62, apy=APY(rate=.0375, frequency=Monthly(day=1)))
 savings.add_income(Recurring(name="INL", amount=300, frequency=Weekly(day="Wednesday")))
 
 
@@ -96,4 +117,4 @@ for i in range(60):
     date = dt.today() + timedelta(days=i)
     checking.update(date)
     savings.update(date)
-    print(date, "{:.2f}".format(checking.balance), "{:.2f}".format(savings.balance))
+    print(date, "{:.2f}".format(checking.balance), "{:.2f}".format(savings.balance), "{:.2f}".format(savings.balance + checking.balance))
