@@ -22,6 +22,7 @@ class Weekly(Frequency):
     def check(self, date: dt) -> bool:
         return True if self.day == f'{date:%A}' else False
 
+# Need a last day of the month function
         
 # class BiWeekly(Frequency):
 #     def __init__(self):
@@ -96,25 +97,35 @@ class Account:
             if expense.frequency.check(date=date): self.balance -= expense.amount
 
 
-checking = Account(name="Checking", balance=617.73, apy=APY(rate=.025, frequency=Monthly(day=1)))
-checking.add_income(Recurring(name="INL", amount=920, frequency=Weekly(day="Wednesday")))
-checking.add_expence(Recurring(name="Grocery", amount=100, frequency=Weekly(day="Sunday")))
-checking.add_expence(Recurring(name="Mortgage", amount=1000, frequency=Monthly(day=1)))
-checking.add_expence(Recurring(name="Private Loans", amount=600, frequency=Monthly(day=7)))
-checking.add_expence(Recurring(name="Gas", amount=80, frequency=Monthly(day=22)))
-checking.add_expence(Recurring(name="City", amount=130, frequency=Monthly(day=22)))
-checking.add_expence(Recurring(name="Internet", amount=20, frequency=Monthly(day=7)))
+# checking = Account(name="Checking", balance=617.73, apy=APY(rate=.025, frequency=Monthly(day=1)))
+# checking.add_income(Recurring(name="INL", amount=920, frequency=Weekly(day="Wednesday")))
+# checking.add_expence(Recurring(name="Grocery", amount=200, frequency=Weekly(day="Sunday")))
+# checking.add_expence(Recurring(name="Mortgage", amount=1000, frequency=Monthly(day=1)))
+# checking.add_expence(Recurring(name="Private Loans", amount=600, frequency=Monthly(day=7)))
+# checking.add_expence(Recurring(name="Gas", amount=80, frequency=Monthly(day=22)))
+# checking.add_expence(Recurring(name="City", amount=130, frequency=Monthly(day=22)))
+# checking.add_expence(Recurring(name="Internet", amount=20, frequency=Monthly(day=7)))
 
-checking.add_expence(OneTime(name="St Patricks", amount=400, frequency=Once(dt(2023,3,17))))
+# checking.add_expence(OneTime(name="St Patricks", amount=400, frequency=Once(dt(2023,3,17))))
+
+# checking.add_expence(OneTime(name="Jetts Bday", amount=500, frequency=Once(dt(2023,4,24))))
+# checking.add_expence(OneTime(name="Aces Bday", amount=500, frequency=Once(dt(2023,11,19))))
+# checking.add_expence(OneTime(name="Christas Bday", amount=1000, frequency=Once(dt(2023,11,20))))
+# checking.add_expence(OneTime(name="Christmas", amount=2000, frequency=Once(dt(2023,12,25))))
 
 # principal=9487.44
 
-savings = Account(name="Savings", balance=10113.62, apy=APY(rate=.0375, frequency=Monthly(day=1)))
-savings.add_income(Recurring(name="INL", amount=300, frequency=Weekly(day="Wednesday")))
+# savings = Account(name="Savings", balance=10113.62, apy=APY(rate=.0375, frequency=Monthly(day=1)))
+# savings.add_income(Recurring(name="INL", amount=300, frequency=Weekly(day="Wednesday")))
 
 
-for i in range(60):
+christas = Account(name="Savings", balance=12004, apy=APY(rate=.0375, frequency=Monthly(day=1)))
+
+
+for i in range(365):
     date = dt.today() + timedelta(days=i)
-    checking.update(date)
-    savings.update(date)
+    # checking.update(date)
+    # savings.update(date)
+    christas.update(date)
     print(date, "{:.2f}".format(checking.balance), "{:.2f}".format(savings.balance), "{:.2f}".format(savings.balance + checking.balance))
+    # print(date, "{:.2f}".format(christas.balance))
